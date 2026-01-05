@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Flow</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap');
+        
+        :root {
+            --bg: #08080a; --text: #ffffff; --card: #16161a; --sep-color: rgba(255,255,255,0.2);
+            --digit-size: clamp(60px, 16vw, 30vh);
+            --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-theme="light"] { --bg: #fdfdfd; --text: #0a0a0c; --card: #f1f1f4; --sep-color: rgba(0,0,0,0.15); }
+        [data-theme="amoled"] { --bg: #000000; --text: #ffffff; --card: #111114; --sep-color: rgba(255,255,255,0.3); }
+
+        /* Remove Blue Selection & Scrollbars */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-font-smoothing: antialiased; font-family: 'Fredoka', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none; 
+            outline: none;
+        }
+
+        /* Hide PC Scrollbars */
+        ::-webkit-scrollbar { display: none; }
+        html { scrollbar-width: none; -ms-overflow-style: none; }
+
+        body {
+            background: var(--bg); color: var(--text); 
+            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+            transition: background 0.4s ease;
+            padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom);
+        }
+
+        .top-nav { height: 65px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; flex-shrink: 0; padding: 0 10px; }
+        .icon-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--card); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .icon-btn:active { transform: scale(0.9); }
+
+        .stage { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; cursor: pointer; }
+        .time-row { display: flex; align-items: baseline; justify-content: center; gap: 0.6vw; width: fit-content; max-width: 100%; pointer-events: none; }
+        .digit-box { height: var(--digit-size); width: calc(var(--digit-size) * 0.62); overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .digit { font-size: var(--digit-size); font-weight: 700; line-height: 1; }
+        .separator { font-size: calc(var(--digit-size) * 0.7); color: var(--sep-color); font-weight: 700; line-height: 1; }
+        
+        .sec-group { display: none; align-items: baseline; opacity: 0.5; }
+        .sec-group .digit-box { height: calc(var(--digit-size) * 0.6); width: calc(var(--digit-size) * 0.38); }
+        .sec-group .digit { font-size: calc(var(--digit-size) * 0.6); }
+
+        body.has-seconds { --digit-size: clamp(50px, 13vw, 25vh); }
+        body.has-ampm { --digit-size: clamp(50px, 14vw, 28vh); }
+        body.has-seconds.has-ampm { --digit-size: clamp(45px, 11vw, 22vh); }
+
+        #ampm { font-size: clamp(0.9rem, 3.5vw, 1.5rem); font-weight: 700; color: var(--sep-color); margin-left: 8px; }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            body.has-seconds { --digit-size: 52vh; }
+            body:not(.has-seconds) { --digit-size: 75vh; }
+            .top-nav, .dock { display: none !important; }
+            body { padding: 0; }
+        }
+
+        .dock { width: 100%; max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding-bottom: 20px; }
+        .segmented { background: var(--card); padding: 5px; border-radius: 100px; display: flex; }
+        .seg-btn { flex: 1; border: none; background: transparent; color: var(--text); padding: 12px; border-radius: 100px; font-weight: 700; opacity: 0.3; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .seg-btn.active { background: var(--bg); opacity: 1; }
+        .btn-row { display: flex; gap: 10px; }
+        .btn { background: var(--card); color: var(--text); border: none; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; flex: 1; cursor: pointer; transition: 0.2s; }
+        .btn-main { flex: 2; background: var(--text); color: var(--bg); }
+
+        .overlay { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 3000; flex-direction: column; animation: fadeIn 0.3s ease; }
+        .overlay-close { position: absolute; top: 20px; left: 20px; z-index: 3001; }
+        .overlay-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+        
+        .edit-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.4; margin-bottom: 20px; }
+        .counter-group { background: var(--card); padding: 25px 35px; border-radius: 35px; display: flex; align-items: center; gap: 15px; }
+        .timer-input { background: transparent; border: none; color: var(--text); font-size: 4rem; font-weight: 700; width: 2.2ch; text-align: center; outline: none; caret-color: #34c759; user-select: text; }
+        .timer-input::-webkit-inner-spin-button, .timer-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .step-btn { 
+            width: 52px; height: 52px; border: none; background: var(--bg); color: var(--text); 
+            border-radius: 18px; font-size: 1.4rem; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center;
+        }
+        .step-btn:active { background: var(--text); color: var(--bg); }
+        
+        .confirm-btn { width: 100%; max-width: 300px; padding: 18px; border-radius: 100px; border: none; background: var(--text); color: var(--bg); font-weight: 700; margin-top: 40px; cursor: pointer; }
+
+        .setting-item { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px 24px; border-radius: 24px; margin-bottom: 10px; }
+        .toggle { width: 48px; height: 26px; position: relative; }
+        .toggle input { opacity: 0; width: 0; }
+        .slider { position: absolute; inset: 0; background: rgba(128,128,128,0.2); border-radius: 34px; transition: 0.3s; cursor: pointer; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; }
+        input:checked + .slider { background: #34c759; }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        #toast { position: fixed; top: 30px; left: 50%; transform: translate(-50%, -20px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 100px; font-weight: 700; opacity: 0; transition: 0.4s var(--ease); z-index: 5000; font-size: 0.85rem; }
+        #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        svg { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)" oncontextmenu="return false;">
+
+    <div id="toast">THEME UPDATED</div>
+
+    <nav class="top-nav">
+        <button class="icon-btn" onclick="toggleFS()"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+        <div style="display:flex; gap:10px;">
+            <button class="icon-btn" id="gear-btn" onclick="openModal('settings-panel')"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+            <button class="icon-btn" onclick="toggleTheme()"><svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+        </div>
+    </nav>
+
+    <main class="stage" id="main-stage">
+        <div class="time-row">
+            <div class="digit-box"><span class="digit" id="d1">0</span></div>
+            <div class="digit-box"><span class="digit" id="d2">0</span></div>
+            <div class="separator">:</div>
+            <div class="digit-box"><span class="digit" id="d3">0</span></div>
+            <div class="digit-box"><span class="digit" id="d4">0</span></div>
+            <div id="c-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><span class="digit" id="d5">0</span></div><div class="digit-box"><span class="digit" id="d6">0</span></div></div>
+            <div id="p-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><span class="digit" id="sd1">0</span></div><div class="digit-box"><span class="digit" id="sd2">0</span></div></div>
+            <div id="ampm" style="display:none">AM</div>
+        </div>
+    </main>
+
+    <footer class="dock">
+        <div class="segmented">
+            <button class="seg-btn active" id="f-tab" onclick="setMode('focus')">Focus</button>
+            <button class="seg-btn" id="b-tab" onclick="setMode('break')">Break</button>
+            <button class="seg-btn" id="c-tab" onclick="setMode('clock')">Clock</button>
+        </div>
+        <div class="btn-row" id="timer-ctrl">
+            <button class="btn" onclick="resetTimer()"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
+            <button class="btn btn-main" onclick="toggleTimer()" id="play-btn"><svg width="28" height="28" viewBox="0 0 24 24" id="play-icon"><path d="M5 3l14 9-14 9V3z" fill="currentColor"/></svg></button>
+            <button class="btn" onclick="openModal('edit-panel')"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+        </div>
+    </footer>
+
+    <div id="edit-panel" class="overlay">
+        <button class="icon-btn overlay-close" onclick="closeModal('edit-panel')"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        <div class="overlay-content">
+            <div class="edit-label">Set Timer</div>
+            <div class="counter-group">
+                <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+                    <button class="step-btn" onmousedown="hold('h-in',1)" onmouseup="stopHold()" onmouseleave="stopHold()" ontouchstart="hold('h-in',1)" ontouchend="stopHold()">+</button>
+                    <input type="number" id="h-in" class="timer-input" value="0">
+                    <button class="step-btn" onmousedown="hold('h-in',-1)" onmouseup="stopHold()" onmouseleave="stopHold()" ontouchstart="hold('h-in',-1)" ontouchend="stopHold()">−</button>
+                </div>
+                <div class="separator" style="margin-top:-5px; opacity:0.5;">:</div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+                    <button class="step-btn" onmousedown="hold('m-in',1)" onmouseup="stopHold()" onmouseleave="stopHold()" ontouchstart="hold('m-in',1)" ontouchend="stopHold()">+</button>
+                    <input type="number" id="m-in" class="timer-input" value="25">
+                    <button class="step-btn" onmousedown="hold('m-in',-1)" onmouseup="stopHold()" onmouseleave="stopHold()" ontouchstart="hold('m-in',-1)" ontouchend="stopHold()">−</button>
+                </div>
+            </div>
+            <button class="confirm-btn" onclick="saveEdit()">Apply Changes</button>
+        </div>
+    </div>
+
+    <div id="settings-panel" class="overlay">
+        <button class="icon-btn overlay-close" onclick="closeModal('settings-panel')"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        <div class="overlay-content">
+            <div class="setting-item"><b>Show Seconds</b><label class="toggle"><input type="checkbox" id="tog-sec" onchange="syncPrefs()"><span class="slider"></span></label></div>
+            <div class="setting-item"><b>Show AM/PM</b><label class="toggle"><input type="checkbox" id="tog-ampm" onchange="syncPrefs()"><span class="slider"></span></label></div>
+            <button class="confirm-btn" onclick="closeModal('settings-panel')">Done</button>
+        </div>
+    </div>
+
+    <script>
+        let app = { f: 1500, b: 300, mode: 'focus', left: 1500, active: false, s_sec: true, s_ampm: false, h_int: null };
+        const chime = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+
+        window.onload = () => {
+            app.s_sec = localStorage.getItem('s_sec') === 'true';
+            app.s_ampm = localStorage.getItem('s_ampm') === 'true';
+            document.getElementById('tog-sec').checked = app.s_sec;
+            document.getElementById('tog-ampm').checked = app.s_ampm;
+            setMode('focus');
+            setInterval(tick, 1000);
+        };
+
+        function handleGlobalClick(e) {
+            if (window.innerHeight < 500 && e.target.id === 'main-stage') {
+                toggleTimer();
+            } else if (!document.fullscreenElement && !['INPUT', 'BUTTON', 'A'].includes(e.target.tagName)) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+        }
+
+        function tick() {
+            let h, m, s, isPomoHour = false;
+            if (app.mode === 'clock') {
+                const n = new Date(); h = n.getHours(); m = n.getMinutes(); s = n.getSeconds();
+                document.getElementById('ampm').textContent = h >= 12 ? 'PM' : 'AM';
+                document.getElementById('ampm').style.display = app.s_ampm ? 'block' : 'none';
+                h = h % 12 || 12;
+                document.getElementById('c-sec').style.display = app.s_sec ? 'flex' : 'none';
+                document.getElementById('p-sec').style.display = 'none';
+                document.title = "Flow Clock";
+            } else {
+                if (app.active && app.left > 0) {
+                    app.left--;
+                    if (app.left === 0) { chime.play(); app.active = false; updateIcon(); }
+                }
+                if (app.left >= 3600) { h = Math.floor(app.left/3600); m = Math.floor((app.left%3600)/60); isPomoHour=true; }
+                else { h = Math.floor(app.left/60); m = app.left%60; }
+                s = app.left % 60;
+                document.getElementById('ampm').style.display = 'none';
+                document.getElementById('c-sec').style.display = 'none';
+                document.getElementById('p-sec').style.display = isPomoHour ? 'flex' : 'none';
+                document.title = `[${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}] Flow`;
+            }
+            updateScaling();
+            render(h, m, s);
+        }
+
+        function updateScaling() {
+            const isClock = app.mode === 'clock';
+            const showSec = (isClock && app.s_sec) || (!isClock && app.left >= 3600);
+            const showAM = isClock && app.s_ampm;
+            document.body.classList.toggle('has-seconds', showSec);
+            document.body.classList.toggle('has-ampm', showAM);
+        }
+
+        function render(v1, v2, v3) {
+            const vals = [Math.floor(v1/10), v1%10, Math.floor(v2/10), v2%10, Math.floor(v3/10), v3%10];
+            const ids = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'sd1', 'sd2'];
+            const map = [...vals, vals[4], vals[5]];
+            ids.forEach((id, i) => {
+                const el = document.getElementById(id);
+                if (el && el.textContent != map[i]) {
+                    el.style.transform = 'translateY(100%)'; el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.textContent = map[i]; el.style.transition = 'none';
+                        el.style.transform = 'translateY(-100%)'; el.offsetHeight; 
+                        el.style.transition = 'transform 0.4s var(--ease), opacity 0.2s';
+                        el.style.transform = 'translateY(0)'; el.style.opacity = '1';
+                    }, 50);
+                }
+            });
+        }
+
+        function setMode(m) {
+            app.mode = m; app.active = false;
+            document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(m[0]+'-tab').classList.add('active');
+            document.getElementById('gear-btn').style.visibility = (m==='clock') ? 'visible' : 'hidden';
+            document.getElementById('timer-ctrl').style.visibility = (m==='clock') ? 'hidden' : 'visible';
+            resetTimer();
+        }
+
+        function resetTimer() { app.left = (app.mode==='focus' ? app.f : app.b); app.active = false; updateIcon(); tick(); }
+        function toggleTimer() { app.active = !app.active; updateIcon(); }
+        function updateIcon() { document.getElementById('play-icon').innerHTML = app.active ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>' : '<path d="M5 3l14 9-14 9V3z" fill="currentColor"/>'; }
+        
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        
+        function saveEdit() {
+            const h = Math.min(99, parseInt(document.getElementById('h-in').value) || 0);
+            const m = Math.min(59, parseInt(document.getElementById('m-in').value) || 0);
+            const total = (h * 3600) + (m * 60);
+            if (app.mode === 'focus') app.f = total; else app.b = total;
+            closeModal('edit-panel'); resetTimer();
+        }
+
+        function step(id, d) { let i = document.getElementById(id); i.value = Math.max(0, parseInt(i.value)+d); }
+        function hold(id, d) { 
+            clearInterval(app.h_int);
+            step(id, d); 
+            app.h_int = setInterval(() => step(id, d), 150); 
+        }
+        function stopHold() { clearInterval(app.h_int); }
+
+        function syncPrefs() {
+            app.s_sec = document.getElementById('tog-sec').checked;
+            app.s_ampm = document.getElementById('tog-ampm').checked;
+            localStorage.setItem('s_sec', app.s_sec);
+            localStorage.setItem('s_ampm', app.s_ampm);
+        }
+
+        function toggleTheme() {
+            const themes = ['dark', 'light', 'amoled'];
+            const cur = document.documentElement.getAttribute('data-theme');
+            const next = themes[(themes.indexOf(cur) + 1) % themes.length];
+            document.documentElement.setAttribute('data-theme', next);
+            showToast(`${next.toUpperCase()} THEME`);
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast'); t.textContent = m;
+            t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800);
+        }
+
+        function toggleFS() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        }
+    </script>
+</body>
+</html>
