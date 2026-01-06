@@ -21,7 +21,8 @@ A **minimalist**, high-performance **Productivity Timer & Clock** designed for d
 ---
 
 ### 🚀 **Getting Started**
-1. **Open** it in any modern browser.
+1. 🔗 **[Click To Flow](https://flowpo.pages.dev/)**
+
 
 ---
 
