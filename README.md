@@ -15,6 +15,8 @@ A **minimalist**, high-performance **Productivity Timer & Clock** designed for d
   * **Clean View:** No scrollbars on PC; just the interface.
   * **Auto-Scaling:** Numbers resize perfectly for **Landscape** or **Portrait**.
 * **Persistence:** Saves your **custom durations** and preferences in **Local Storage**.
+* **Live Tab Timer:** Shows remaining **focus/break time or live clock directly in the browser tab**.
+
 <img width="1366" height="768" alt="Screenshot (8)" src="https://github.com/user-attachments/assets/d18e240c-3523-4d76-ba62-ece4a9209f49" />
 ---
 
