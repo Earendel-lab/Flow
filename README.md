@@ -1,6 +1,5 @@
 # 🌊 Flow
-
-<img width="1366" height="752" alt="Screenshot (9)" src="https://github.com/user-attachments/assets/5ab03fd0-fe2a-438a-88a7-223a8fdc6347" />
+<img width="1366" height="768" alt="Screenshot (10)" src="https://github.com/user-attachments/assets/dbef5c16-68b5-4b9a-b9e9-073b8d69db84" />
 
 
 A **minimalist**, high-performance **Productivity Timer & Clock** designed for deep work. **Flow** provides a distraction-free environment with a focus on **smooth animations** and **clean typography**.
