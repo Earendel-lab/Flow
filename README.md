@@ -23,7 +23,7 @@ A **minimalist**, high-performance **Productivity Timer & Clock** designed for d
 
 ### 🚀 **Getting Started**
 1. 🔗 **[Click To Flow](https://flowpo.pages.dev/)**
-2. **[Download the APP for Android](https://github.com/Earendel-lab/Flow/releases/tag/v1)** 
+2. 🔗 **[Download the APP for Android](https://github.com/Earendel-lab/Flow/releases/tag/v1)** 
 
 ---
 
