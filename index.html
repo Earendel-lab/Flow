@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Flow</title>
+    
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap');
         
@@ -20,40 +26,33 @@
             margin: 0; padding: 0; box-sizing: border-box; 
             -webkit-font-smoothing: antialiased; font-family: 'Fredoka', sans-serif; 
             -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            outline: none;
+            user-select: none; outline: none; touch-action: manipulation;
         }
-
-        ::-webkit-scrollbar { display: none; }
-        html { scrollbar-width: none; -ms-overflow-style: none; }
 
         body {
             background: var(--bg); color: var(--text); 
             height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
-            transition: background 0.4s ease;
+            transition: background 0.4s ease, color 0.4s ease;
             padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom);
         }
 
+        /* UI ELEMENTS */
         .top-nav { height: 65px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; flex-shrink: 0; padding: 0 10px; }
         .icon-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--card); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .icon-btn:active { transform: scale(0.9); }
 
+        /* CLOCK AREA */
         .stage { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; cursor: pointer; }
         .time-row { display: flex; align-items: baseline; justify-content: center; gap: 0.6vw; width: fit-content; max-width: 100%; pointer-events: none; }
         .digit-box { height: var(--digit-size); width: calc(var(--digit-size) * 0.62); overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .digit { font-size: var(--digit-size); font-weight: 700; line-height: 1; }
+        .digit { font-size: var(--digit-size); font-weight: 700; line-height: 1; transition: transform 0.4s var(--ease), opacity 0.2s; }
         .separator { font-size: calc(var(--digit-size) * 0.7); color: var(--sep-color); font-weight: 700; line-height: 1; }
         
         .sec-group { display: none; align-items: baseline; opacity: 0.5; }
         .sec-group .digit-box { height: calc(var(--digit-size) * 0.6); width: calc(var(--digit-size) * 0.38); }
         .sec-group .digit { font-size: calc(var(--digit-size) * 0.6); }
 
-        body.has-seconds { --digit-size: clamp(50px, 13vw, 25vh); }
-        body.has-ampm { --digit-size: clamp(50px, 14vw, 28vh); }
-        body.has-seconds.has-ampm { --digit-size: clamp(45px, 11vw, 22vh); }
-
-        #ampm { font-size: clamp(0.9rem, 3.5vw, 1.5rem); font-weight: 700; color: var(--sep-color); margin-left: 8px; }
-
+        /* LANDSCAPE MODE (AUTO FULLSCREEN VIEW) */
         @media (orientation: landscape) and (max-height: 500px) {
             body.has-seconds { --digit-size: 52vh; }
             body:not(.has-seconds) { --digit-size: 75vh; }
@@ -61,6 +60,11 @@
             body { padding: 0; }
         }
 
+        body.has-seconds { --digit-size: clamp(50px, 13vw, 25vh); }
+        body.has-ampm { --digit-size: clamp(50px, 14vw, 28vh); }
+        #ampm { font-size: clamp(0.9rem, 3.5vw, 1.5rem); font-weight: 700; color: var(--sep-color); margin-left: 8px; }
+
+        /* DOCK */
         .dock { width: 100%; max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding-bottom: 20px; }
         .segmented { background: var(--card); padding: 5px; border-radius: 100px; display: flex; }
         .seg-btn { flex: 1; border: none; background: transparent; color: var(--text); padding: 12px; border-radius: 100px; font-weight: 700; opacity: 0.3; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
@@ -69,24 +73,16 @@
         .btn { background: var(--card); color: var(--text); border: none; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; flex: 1; cursor: pointer; transition: 0.2s; }
         .btn-main { flex: 2; background: var(--text); color: var(--bg); }
 
+        /* OVERLAYS */
         .overlay { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 3000; flex-direction: column; animation: fadeIn 0.3s ease; }
         .overlay-close { position: absolute; top: 20px; left: 20px; z-index: 3001; }
         .overlay-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
-        
-        .edit-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.4; margin-bottom: 20px; }
         .counter-group { background: var(--card); padding: 25px 35px; border-radius: 35px; display: flex; align-items: center; gap: 15px; }
-        .timer-input { background: transparent; border: none; color: var(--text); font-size: 4rem; font-weight: 700; width: 2.2ch; text-align: center; outline: none; caret-color: #34c759; user-select: text; }
-        .timer-input::-webkit-inner-spin-button, .timer-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        
-        .step-btn { 
-            width: 52px; height: 52px; border: none; background: var(--bg); color: var(--text); 
-            border-radius: 18px; font-size: 1.4rem; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center;
-        }
-        .step-btn:active { background: var(--text); color: var(--bg); }
-        
+        .timer-input { background: transparent; border: none; color: var(--text); font-size: 4rem; font-weight: 700; width: 2.2ch; text-align: center; }
+        .step-btn { width: 52px; height: 52px; border: none; background: var(--bg); color: var(--text); border-radius: 18px; font-size: 1.4rem; cursor: pointer; touch-action: none; }
         .confirm-btn { width: 100%; max-width: 300px; padding: 18px; border-radius: 100px; border: none; background: var(--text); color: var(--bg); font-weight: 700; margin-top: 40px; cursor: pointer; }
 
+        /* SETTINGS */
         .setting-item { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px 24px; border-radius: 24px; margin-bottom: 10px; }
         .toggle { width: 48px; height: 26px; position: relative; }
         .toggle input { opacity: 0; width: 0; }
@@ -95,14 +91,14 @@
         input:checked + .slider { background: #34c759; }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        #toast { position: fixed; top: 30px; left: 50%; transform: translate(-50%, -20px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 100px; font-weight: 700; opacity: 0; transition: 0.4s var(--ease); z-index: 5000; font-size: 0.85rem; }
+        #toast { position: fixed; top: 30px; left: 50%; transform: translate(-50%, -20px); background: var(--text); color: var(--bg); padding: 12px 24px; border-radius: 100px; font-weight: 700; opacity: 0; transition: 0.4s var(--ease); z-index: 5000; font-size: 0.85rem; pointer-events: none; }
         #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         svg { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
     </style>
 </head>
-<body onclick="handleGlobalClick(event)" oncontextmenu="return false;">
+<body onclick="handleGlobalClick(event)">
 
     <div id="toast">THEME UPDATED</div>
 
@@ -143,38 +139,17 @@
     <div id="edit-panel" class="overlay">
         <button class="icon-btn overlay-close" onclick="closeModal('edit-panel')"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
         <div class="overlay-content">
-            <div class="edit-label">Set Timer</div>
             <div class="counter-group">
                 <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-                    <button class="step-btn" 
-                        onmousedown="hold(event, 'h-in', 1)" 
-                        onmouseup="stopHold()" 
-                        onmouseleave="stopHold()" 
-                        ontouchstart="hold(event, 'h-in', 1)" 
-                        ontouchend="stopHold()">+</button>
+                    <button class="step-btn" onpointerdown="hold(event, 'h-in', 1)" onpointerup="stopHold()" onpointerleave="stopHold()">+</button>
                     <input type="number" id="h-in" class="timer-input" value="0">
-                    <button class="step-btn" 
-                        onmousedown="hold(event, 'h-in', -1)" 
-                        onmouseup="stopHold()" 
-                        onmouseleave="stopHold()" 
-                        ontouchstart="hold(event, 'h-in', -1)" 
-                        ontouchend="stopHold()">−</button>
+                    <button class="step-btn" onpointerdown="hold(event, 'h-in', -1)" onpointerup="stopHold()" onpointerleave="stopHold()">−</button>
                 </div>
-                <div class="separator" style="margin-top:-5px; opacity:0.5;">:</div>
+                <div class="separator" style="opacity:0.5;">:</div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-                    <button class="step-btn" 
-                        onmousedown="hold(event, 'm-in', 1)" 
-                        onmouseup="stopHold()" 
-                        onmouseleave="stopHold()" 
-                        ontouchstart="hold(event, 'm-in', 1)" 
-                        ontouchend="stopHold()">+</button>
+                    <button class="step-btn" onpointerdown="hold(event, 'm-in', 1)" onpointerup="stopHold()" onpointerleave="stopHold()">+</button>
                     <input type="number" id="m-in" class="timer-input" value="25">
-                    <button class="step-btn" 
-                        onmousedown="hold(event, 'm-in', -1)" 
-                        onmouseup="stopHold()" 
-                        onmouseleave="stopHold()" 
-                        ontouchstart="hold(event, 'm-in', -1)" 
-                        ontouchend="stopHold()">−</button>
+                    <button class="step-btn" onpointerdown="hold(event, 'm-in', -1)" onpointerup="stopHold()" onpointerleave="stopHold()">−</button>
                 </div>
             </div>
             <button class="confirm-btn" onclick="saveEdit()">Apply Changes</button>
@@ -195,7 +170,7 @@
         const chime = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
 
         window.onload = () => {
-            app.s_sec = localStorage.getItem('s_sec') === 'true';
+            app.s_sec = localStorage.getItem('s_sec') !== 'false';
             app.s_ampm = localStorage.getItem('s_ampm') === 'true';
             document.getElementById('tog-sec').checked = app.s_sec;
             document.getElementById('tog-ampm').checked = app.s_ampm;
@@ -204,10 +179,20 @@
         };
 
         function handleGlobalClick(e) {
-            if (window.innerHeight < 500 && e.target.id === 'main-stage') {
-                toggleTimer();
-            } else if (!document.fullscreenElement && !['INPUT', 'BUTTON', 'A'].includes(e.target.tagName)) {
-                document.documentElement.requestFullscreen().catch(() => {});
+           
+            if (e.target.closest('.stage')) {
+                
+                if (window.innerHeight < 500) {
+                    toggleTimer();
+                }
+            }
+        }
+
+        function toggleFS() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(()=>{});
+            } else {
+                document.exitFullscreen().catch(()=>{});
             }
         }
 
@@ -220,11 +205,14 @@
                 h = h % 12 || 12;
                 document.getElementById('c-sec').style.display = app.s_sec ? 'flex' : 'none';
                 document.getElementById('p-sec').style.display = 'none';
-                document.title = "Flow Clock";
             } else {
                 if (app.active && app.left > 0) {
                     app.left--;
-                    if (app.left === 0) { chime.play(); app.active = false; updateIcon(); }
+                    if (app.left === 0) { 
+                        app.active = false; updateIcon(); chime.play().catch(()=>{});
+                        if (app.mode === 'focus') { showToast("FOCUS DONE!"); setTimeout(()=>setMode('break'), 1500); }
+                        else { showToast("BREAK DONE!"); setTimeout(()=>setMode('focus'), 1500); }
+                    }
                 }
                 if (app.left >= 3600) { h = Math.floor(app.left/3600); m = Math.floor((app.left%3600)/60); isPomoHour=true; }
                 else { h = Math.floor(app.left/60); m = app.left%60; }
@@ -232,7 +220,6 @@
                 document.getElementById('ampm').style.display = 'none';
                 document.getElementById('c-sec').style.display = 'none';
                 document.getElementById('p-sec').style.display = isPomoHour ? 'flex' : 'none';
-                document.title = `[${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}] Flow`;
             }
             updateScaling();
             render(h, m, s);
@@ -241,9 +228,8 @@
         function updateScaling() {
             const isClock = app.mode === 'clock';
             const showSec = (isClock && app.s_sec) || (!isClock && app.left >= 3600);
-            const showAM = isClock && app.s_ampm;
             document.body.classList.toggle('has-seconds', showSec);
-            document.body.classList.toggle('has-ampm', showAM);
+            document.body.classList.toggle('has-ampm', isClock && app.s_ampm);
         }
 
         function render(v1, v2, v3) {
@@ -281,22 +267,15 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
         function saveEdit() {
-            const h = Math.min(99, parseInt(document.getElementById('h-in').value) || 0);
-            const m = Math.min(59, parseInt(document.getElementById('m-in').value) || 0);
-            const total = (h * 3600) + (m * 60);
-            if (app.mode === 'focus') app.f = total; else app.b = total;
+            app.f = (parseInt(document.getElementById('h-in').value) || 0) * 3600 + (parseInt(document.getElementById('m-in').value) || 0) * 60;
             closeModal('edit-panel'); resetTimer();
         }
 
-        function step(id, d) { let i = document.getElementById(id); i.value = Math.max(0, parseInt(i.value)+d); }
-        
-        function hold(e, id, d) { 
-            if (e.cancelable) e.preventDefault(); // Stop mobile "double-tap" count
+        function hold(e, id, d) {
             clearInterval(app.h_int);
-            step(id, d); 
-            app.h_int = setInterval(() => step(id, d), 150); 
+            const step = () => { let i = document.getElementById(id); i.value = Math.max(0, parseInt(i.value)+d); };
+            step(); app.h_int = setInterval(step, 150);
         }
-
         function stopHold() { clearInterval(app.h_int); }
 
         function syncPrefs() {
@@ -311,17 +290,13 @@
             const cur = document.documentElement.getAttribute('data-theme');
             const next = themes[(themes.indexOf(cur) + 1) % themes.length];
             document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
             showToast(`${next.toUpperCase()} THEME`);
         }
 
         function showToast(m) {
             const t = document.getElementById('toast'); t.textContent = m;
-            t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1800);
-        }
-
-        function toggleFS() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
+            t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000);
         }
     </script>
 </body>
