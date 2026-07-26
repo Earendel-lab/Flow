@@ -3,56 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" id="theme-color-meta" content="#08080a">
     <title>Flow</title>
     
     <script>
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
+        const THEME_BG = { dark: '#08080a', light: '#fdfdfd', amoled: '#000000' };
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', THEME_BG[savedTheme]);
     </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap');
+
+        @font-face {
+            font-family: 'NStyle04';
+            src: url(data:font/woff2;base64,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) format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
         
         :root {
             --bg: #08080a; --text: #ffffff; --card: #16161a; --sep-color: rgba(255,255,255,0.2);
-            --digit-size: clamp(60px, 16vw, 30vh);
+            --digit-size: clamp(80px, min(23vw, 40vh), 500px);
             --ease: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         [data-theme="light"] { --bg: #fdfdfd; --text: #0a0a0c; --card: #f1f1f4; --sep-color: rgba(0,0,0,0.15); }
         [data-theme="amoled"] { --bg: #000000; --text: #ffffff; --card: #111114; --sep-color: rgba(255,255,255,0.3); }
 
+        html {
+            height: 100%;
+            overflow: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        html::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             -webkit-font-smoothing: antialiased; font-family: 'Fredoka', sans-serif; 
             -webkit-tap-highlight-color: transparent; 
-            user-select: none; outline: none; touch-action: manipulation;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+            outline: none; touch-action: manipulation;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         body {
             background: var(--bg); color: var(--text); 
-            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+            height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
             transition: background 0.4s ease, color 0.4s ease;
             padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom);
         }
 
-        /* UI ELEMENTS */
         .top-nav { height: 65px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; flex-shrink: 0; padding: 0 10px; }
         .icon-btn { width: 46px; height: 46px; border-radius: 50%; border: none; background: var(--card); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .icon-btn:active { transform: scale(0.9); }
 
-        /* CLOCK AREA */
         .stage { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100%; cursor: pointer; }
-        .time-row { display: flex; align-items: baseline; justify-content: center; gap: 0.6vw; width: fit-content; max-width: 100%; pointer-events: none; }
-        .digit-box { height: var(--digit-size); width: calc(var(--digit-size) * 0.62); overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .digit { font-size: var(--digit-size); font-weight: 700; line-height: 1; transition: transform 0.4s var(--ease), opacity 0.2s; }
-        .separator { font-size: calc(var(--digit-size) * 0.7); color: var(--sep-color); font-weight: 700; line-height: 1; }
-        
-        .sec-group { display: none; align-items: baseline; opacity: 0.5; }
-        .sec-group .digit-box { height: calc(var(--digit-size) * 0.6); width: calc(var(--digit-size) * 0.38); }
-        .sec-group .digit { font-size: calc(var(--digit-size) * 0.6); }
+        .time-row { display: flex; align-items: center; justify-content: center; gap: 0.6vw; width: fit-content; max-width: 100%; pointer-events: none; }
+        .digit-box { position: relative; height: var(--digit-size); width: calc(var(--digit-size) * 0.88); overflow: visible; display: flex; justify-content: center; align-items: center; }
+        svg.digit { display: block; width: 100%; height: 100%; overflow: visible; color: var(--text); position: relative; z-index: 1; }
+        svg.digit .flip { transform: scale(1, -1); transform-origin: 0 0; }
+        svg.digit path { fill: currentColor; }
+        .curtain { display: none; }
 
-        /* LANDSCAPE MODE (AUTO FULLSCREEN VIEW) */
+        .colon { height: var(--digit-size); width: calc(var(--digit-size) * 0.22); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--digit-size) * 0.16); }
+        .colon span { width: calc(var(--digit-size) * 0.1); height: calc(var(--digit-size) * 0.1); border-radius: 50%; background: var(--sep-color); flex-shrink: 0; }
+
+        .separator { font-family: 'Fredoka', sans-serif; font-size: calc(var(--digit-size) * 0.5); color: var(--sep-color); font-weight: 400; line-height: 1; }
+        
+        .sec-group { display: none; align-items: center; opacity: 0.5; }
+        .sec-group .digit-box { height: calc(var(--digit-size) * 0.6); width: calc(var(--digit-size) * 0.48); }
+
         @media (orientation: landscape) and (max-height: 500px) {
             body.has-seconds { --digit-size: 52vh; }
             body:not(.has-seconds) { --digit-size: 75vh; }
@@ -60,29 +88,41 @@
             body { padding: 0; }
         }
 
-        body.has-seconds { --digit-size: clamp(50px, 13vw, 25vh); }
-        body.has-ampm { --digit-size: clamp(50px, 14vw, 28vh); }
-        #ampm { font-size: clamp(0.9rem, 3.5vw, 1.5rem); font-weight: 700; color: var(--sep-color); margin-left: 8px; }
+        body.has-seconds { --digit-size: clamp(64px, min(19vw, 33vh), 380px); }
+        body.has-ampm { --digit-size: clamp(64px, min(20vw, 35vh), 400px); }
+        #ampm { font-family: 'NStyle04', 'Fredoka', sans-serif; font-size: clamp(0.9rem, 3.5vw, 1.6rem); font-weight: 400; color: var(--sep-color); margin-left: 8px; }
 
-        /* DOCK */
         .dock { width: 100%; max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; padding-bottom: 20px; }
         .segmented { background: var(--card); padding: 5px; border-radius: 100px; display: flex; }
-        .seg-btn { flex: 1; border: none; background: transparent; color: var(--text); padding: 12px; border-radius: 100px; font-weight: 700; opacity: 0.3; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .seg-btn { flex: 1; border: none; background: transparent; color: var(--text); padding: 12px 4px; border-radius: 100px; font-weight: 700; opacity: 0.3; font-size: clamp(0.62rem, 2.6vw, 0.85rem); white-space: nowrap; cursor: pointer; transition: 0.2s; }
         .seg-btn.active { background: var(--bg); opacity: 1; }
         .btn-row { display: flex; gap: 10px; }
         .btn { background: var(--card); color: var(--text); border: none; height: 64px; border-radius: 20px; display: flex; align-items: center; justify-content: center; flex: 1; cursor: pointer; transition: 0.2s; }
         .btn-main { flex: 2; background: var(--text); color: var(--bg); }
 
-        /* OVERLAYS */
-        .overlay { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 3000; flex-direction: column; animation: fadeIn 0.3s ease; }
-        .overlay-close { position: absolute; top: 20px; left: 20px; z-index: 3001; }
-        .overlay-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
-        .counter-group { background: var(--card); padding: 25px 35px; border-radius: 35px; display: flex; align-items: center; gap: 15px; }
-        .timer-input { background: transparent; border: none; color: var(--text); font-size: 4rem; font-weight: 700; width: 2.2ch; text-align: center; }
-        .step-btn { width: 52px; height: 52px; border: none; background: var(--bg); color: var(--text); border-radius: 18px; font-size: 1.4rem; cursor: pointer; touch-action: none; }
-        .confirm-btn { width: 100%; max-width: 300px; padding: 18px; border-radius: 100px; border: none; background: var(--text); color: var(--bg); font-weight: 700; margin-top: 40px; cursor: pointer; }
+        .overlay { position: fixed; inset: 0; background: var(--bg); display: none; z-index: 3000; flex-direction: column; animation: fadeIn 0.3s ease; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        .overlay-close { position: absolute; top: calc(env(safe-area-inset-top) + 20px); left: 20px; z-index: 3001; }
+        .overlay-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; gap: 8px; }
+        .edit-title { font-size: clamp(1.2rem, 5vw, 1.7rem); font-weight: 700; opacity: 0.6; margin-bottom: 24px; }
+        .counter-group { background: var(--card); padding: clamp(40px, 10vw, 80px) clamp(30px, 8vw, 60px); border-radius: 48px; display: flex; align-items: center; gap: clamp(12px, 3vw, 24px); width: min(100%, 800px); justify-content: center; }
+        .counter-col { display: flex; flex-direction: column; align-items: center; gap: 16px; flex: 1; min-width: 0; overflow: visible; }
+        .timer-input {
+            font-family: 'NStyle04', 'Fredoka', sans-serif; background: transparent; border: none; color: var(--text);
+            font-size: clamp(3.5rem, 18vw, 8rem); font-weight: 400; width: 100%; max-width: 100%; text-align: center; overflow: visible;
+            -moz-appearance: textfield; letter-spacing: 0.12em;
+        }
+        .timer-input::-webkit-outer-spin-button, .timer-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .unit-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.35; margin-top: -12px; }
+        .counter-group .separator { font-size: clamp(2rem, 8vw, 3.5rem); flex-shrink: 0; }
 
-        /* SETTINGS */
+        @keyframes digitIn { from { opacity: 0.15; transform: translateY(6%); } to { opacity: 1; transform: translateY(0); } }
+        .live-laps { display: none; flex-direction: column; gap: 8px; width: 100%; max-width: 450px; margin: 0 auto; max-height: 20vh; overflow-y: auto; padding: 0 10px 10px; flex-shrink: 0; }
+        .lap-row { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 12px 18px; border-radius: 16px; font-size: 0.85rem; animation: digitIn 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+        .lap-row .lap-n { opacity: 0.4; font-weight: 700; letter-spacing: 0.05em; }
+        .lap-row .lap-t { font-family: 'NStyle04', monospace; font-weight: 400; }
+        .step-btn { width: 58px; height: 58px; border: none; background: var(--bg); color: var(--text); border-radius: 20px; font-size: 1.6rem; cursor: pointer; touch-action: none; flex-shrink: 0; }
+        .confirm-btn { width: 100%; max-width: 340px; padding: 20px; border-radius: 100px; border: none; background: var(--text); color: var(--bg); font-weight: 700; font-size: 1.05rem; cursor: pointer; }
+
         .setting-item { width: 100%; max-width: 360px; display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px 24px; border-radius: 24px; margin-bottom: 10px; }
         .toggle { width: 48px; height: 26px; position: relative; }
         .toggle input { opacity: 0; width: 0; }
@@ -98,7 +138,7 @@
         svg { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
     </style>
 </head>
-<body onclick="handleGlobalClick(event)">
+<body onclick="handleGlobalClick(event)" oncopy="return false" oncut="return false" onpaste="return false" oncontextmenu="return false">
 
     <div id="toast">THEME UPDATED</div>
 
@@ -112,47 +152,61 @@
 
     <main class="stage" id="main-stage">
         <div class="time-row">
-            <div class="digit-box"><span class="digit" id="d1">0</span></div>
-            <div class="digit-box"><span class="digit" id="d2">0</span></div>
-            <div class="separator">:</div>
-            <div class="digit-box"><span class="digit" id="d3">0</span></div>
-            <div class="digit-box"><span class="digit" id="d4">0</span></div>
-            <div id="c-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><span class="digit" id="d5">0</span></div><div class="digit-box"><span class="digit" id="d6">0</span></div></div>
-            <div id="p-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><span class="digit" id="sd1">0</span></div><div class="digit-box"><span class="digit" id="sd2">0</span></div></div>
+            <div class="digit-box"><svg class="digit" id="d1" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div>
+            <div class="digit-box"><svg class="digit" id="d2" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div>
+            <div class="colon"><span></span><span></span></div>
+            <div class="digit-box"><svg class="digit" id="d3" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div>
+            <div class="digit-box"><svg class="digit" id="d4" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div>
+            <div id="c-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><svg class="digit" id="d5" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div><div class="digit-box"><svg class="digit" id="d6" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div></div>
+            <div id="p-sec" class="sec-group"><div class="separator">:</div><div class="digit-box"><svg class="digit" id="sd1" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div><div class="digit-box"><svg class="digit" id="sd2" viewBox="0 -1024 1024 1024" data-val="_"><g class="flip"><path pathLength="1" d=""/></g></svg><div class="curtain"></div></div></div>
             <div id="ampm" style="display:none">AM</div>
         </div>
     </main>
+
+    <div id="live-laps" class="live-laps"></div>
 
     <footer class="dock">
         <div class="segmented">
             <button class="seg-btn active" id="f-tab" onclick="setMode('focus')">Focus</button>
             <button class="seg-btn" id="b-tab" onclick="setMode('break')">Break</button>
             <button class="seg-btn" id="c-tab" onclick="setMode('clock')">Clock</button>
+            <button class="seg-btn" id="s-tab" onclick="setMode('stopwatch')">Stopwatch</button>
         </div>
         <div class="btn-row" id="timer-ctrl">
             <button class="btn" onclick="resetTimer()"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
             <button class="btn btn-main" onclick="toggleTimer()" id="play-btn"><svg width="28" height="28" viewBox="0 0 24 24" id="play-icon"><path d="M5 3l14 9-14 9V3z" fill="currentColor"/></svg></button>
-            <button class="btn" onclick="openModal('edit-panel')"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+            <button class="btn" onclick="openEditPanel()"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+        </div>
+        <div class="btn-row" id="sw-ctrl" style="display:none;">
+            <button class="btn" onclick="swReset()" id="sw-reset-btn"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg></button>
+            <button class="btn btn-main" onclick="toggleStopwatch()" id="sw-play-btn"><svg width="28" height="28" viewBox="0 0 24 24" id="sw-play-icon"><path d="M5 3l14 9-14 9V3z" fill="currentColor"/></svg></button>
+            <button class="btn" onclick="swLap()" id="sw-lap-btn"><svg width="20" height="20" viewBox="0 0 24 24" style="stroke:none;"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3 2.25a.75.75 0 01.75.75v.54l1.838-.46a9.75 9.75 0 016.725.738l.108.054a8.25 8.25 0 005.58.652l3.109-.732a.75.75 0 01.917.81 47.784 47.784 0 00.005 10.337.75.75 0 01-.574.812l-3.114.733a9.75 9.75 0 01-6.594-.77l-.108-.054a8.25 8.25 0 00-5.69-.625l-2.202.55V21a.75.75 0 01-1.5 0V3A.75.75 0 013 2.25z"/></svg></button>
         </div>
     </footer>
 
     <div id="edit-panel" class="overlay">
         <button class="icon-btn overlay-close" onclick="closeModal('edit-panel')"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
         <div class="overlay-content">
+            <div class="edit-title" id="edit-title">Focus Duration</div>
             <div class="counter-group">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+                <div class="counter-col">
                     <button class="step-btn" onpointerdown="hold(event, 'h-in', 1)" onpointerup="stopHold()" onpointerleave="stopHold()">+</button>
-                    <input type="number" id="h-in" class="timer-input" value="0">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" id="h-in" class="timer-input" value="0" oninput="clampInput(this,23)">
+                    <span class="unit-label">hr</span>
                     <button class="step-btn" onpointerdown="hold(event, 'h-in', -1)" onpointerup="stopHold()" onpointerleave="stopHold()">−</button>
                 </div>
                 <div class="separator" style="opacity:0.5;">:</div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+                <div class="counter-col">
                     <button class="step-btn" onpointerdown="hold(event, 'm-in', 1)" onpointerup="stopHold()" onpointerleave="stopHold()">+</button>
-                    <input type="number" id="m-in" class="timer-input" value="25">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" id="m-in" class="timer-input" value="25" oninput="clampInput(this,59)">
+                    <span class="unit-label">min</span>
                     <button class="step-btn" onpointerdown="hold(event, 'm-in', -1)" onpointerup="stopHold()" onpointerleave="stopHold()">−</button>
                 </div>
             </div>
-            <button class="confirm-btn" onclick="saveEdit()">Apply Changes</button>
+            <div style="display:flex; gap:16px; width: 100%; max-width: 400px; margin-top: 44px;">
+                <button class="btn" style="border-radius:100px; height: 60px; font-weight:700; font-size: 1.05rem;" onclick="resetEdit()">Reset</button>
+                <button class="confirm-btn" style="margin-top:0; height: 60px; flex:2;" onclick="saveEdit()">Apply Changes</button>
+            </div>
         </div>
     </div>
 
@@ -161,13 +215,36 @@
         <div class="overlay-content">
             <div class="setting-item"><b>Show Seconds</b><label class="toggle"><input type="checkbox" id="tog-sec" onchange="syncPrefs()"><span class="slider"></span></label></div>
             <div class="setting-item"><b>Show AM/PM</b><label class="toggle"><input type="checkbox" id="tog-ampm" onchange="syncPrefs()"><span class="slider"></span></label></div>
-            <button class="confirm-btn" onclick="closeModal('settings-panel')">Done</button>
+            <button class="confirm-btn" style="margin-top: 44px;" onclick="closeModal('settings-panel')">Done</button>
         </div>
     </div>
 
     <script>
-        let app = { f: 1500, b: 300, mode: 'focus', left: 1500, active: false, s_sec: true, s_ampm: false, h_int: null };
+        let app = { f: 1500, b: 300, mode: 'focus', left: 1500, active: false, s_sec: true, s_ampm: false, h_int: null, h_speed: 250,
+            sw: { running: false, startTs: 0, accum: 0, laps: [] }, sw_int: null };
         const chime = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+        chime.volume = 1.0;
+
+        const DIGIT_PATHS = {'0':'M853 922Q926 920 974.0 872.0Q1022 824 1024 751V273Q1022 201 974.0 152.5Q926 104 853 103H171Q98 104 50.0 152.5Q2 201 0 273V751Q2 824 50.0 872.0Q98 920 171 922H853Q853 922 853 922ZM201 722Q201 696 201 512V302H813V722H201Q201 722 201 722Z','1':'M615 922Q615 883 615 611V301H1025V103H1V301H410V717H205V922H615Q615 922 615 922Z','2':'M1024 598Q1022 516 967.0 461.0Q912 406 830 404H201V302H1024V103H194Q113 104 58.5 157.5Q4 211 0 292V404Q2 487 57.0 541.5Q112 596 194 598H813V728H1024V598Q1024 598 1024 598ZM830 922Q912 920 967.0 865.0Q1022 810 1024 728H201V922H830Q830 922 830 922Z','3':'M816 922Q903 919 961.5 862.5Q1020 806 1024 720V310Q1022 225 966.5 167.5Q911 110 828 103H0V301H815V414H210V611H815V732H0V922H816Q816 922 816 922Z','4':'M1025 103Q1011 103 916 103H808V412H207Q119 414 61.0 472.5Q3 531 1 619V922H207V622H808V922H1025V103Q1025 103 1025 103Z','5':'M1 598Q3 516 57.5 461.0Q112 406 195 404H824V302H1V103H830Q913 105 967.5 159.5Q1022 214 1025 297V404Q1022 487 967.5 541.5Q913 596 830 598H212V728H1V598Q1 598 1 598ZM195 922Q112 920 57.5 865.0Q3 810 1 728H824V922H195Q195 922 195 922Z','6':'M214 103Q213 103 210 103H207Q119 105 60.5 163.5Q2 222 0 310V715Q2 803 60.5 861.0Q119 919 207 922H819V715H214V103Q214 103 214 103ZM819 616Q906 613 964.0 555.5Q1022 498 1024 411V307Q1022 220 964.0 162.5Q906 105 819 103H214V310H819V409H214V616H819Q819 616 819 616Z','7':'M1024 103Q1011 103 917 103H811V732H0V922H819Q906 920 964.0 862.0Q1022 804 1024 717V103Q1024 103 1024 103Z','8':'M817 922Q904 920 962.0 863.0Q1020 806 1024 720L1025 310Q1022 222 963.5 163.5Q905 105 817 103H197Q113 105 58.0 160.0Q3 215 1 299V717Q3 804 60.5 862.0Q118 920 205 922H817Q817 922 817 922ZM214 302Q251 302 512 302H811V409H214V302Q214 302 214 302ZM214 616Q251 616 512 616H811V715H214V616Q214 616 214 616Z','9':'M810 409Q772 409 508 409H205Q118 411 60.0 468.5Q2 526 0 613V717Q2 804 60.0 862.0Q118 920 205 922H817Q903 920 961.5 863.0Q1020 806 1024 720V310Q1022 222 963.5 163.5Q905 105 817 103H201V302H810V409Q810 409 810 409ZM205 616Q243 616 508 616H810V715H205V616Q205 616 205 616Z'};
+
+        function setDigitSVG(el, ch, animate) {
+            const path = el.querySelector('path');
+            path.setAttribute('d', DIGIT_PATHS[ch] || '');
+
+            if (animate) {
+                el.style.transition = 'none';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-22%) scale(0.96)';
+                void el.getBoundingClientRect();
+                el.style.transition = 'transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.24s ease';
+                el.style.transform = 'translateY(0) scale(1)';
+                el.style.opacity = '1';
+            } else {
+                el.style.transition = 'none';
+                el.style.transform = 'translateY(0) scale(1)';
+                el.style.opacity = '1';
+            }
+        }
 
         window.onload = () => {
             app.s_sec = localStorage.getItem('s_sec') !== 'false';
@@ -179,14 +256,24 @@
         };
 
         function handleGlobalClick(e) {
-           
             if (e.target.closest('.stage')) {
-                
+                if (app.mode === 'stopwatch') {
+                    toggleStopwatch();
+                    return;
+                }
                 if (window.innerHeight < 500) {
                     toggleTimer();
                 }
             }
         }
+
+        document.addEventListener('keydown', (e) => {
+            if (app.mode !== 'stopwatch') return;
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+            if (e.code === 'Space') { e.preventDefault(); toggleStopwatch(); }
+            else if (e.key === 'l' || e.key === 'L') { swLap(); }
+            else if (e.key === 'r' || e.key === 'R') { swReset(); }
+        });
 
         function toggleFS() {
             if (!document.fullscreenElement) {
@@ -198,6 +285,7 @@
 
         function tick() {
             let h, m, s, isPomoHour = false;
+            if (app.mode === 'stopwatch') return;
             if (app.mode === 'clock') {
                 const n = new Date(); h = n.getHours(); m = n.getMinutes(); s = n.getSeconds();
                 document.getElementById('ampm').textContent = h >= 12 ? 'PM' : 'AM';
@@ -210,8 +298,13 @@
                     app.left--;
                     if (app.left === 0) { 
                         app.active = false; updateIcon(); chime.play().catch(()=>{});
-                        if (app.mode === 'focus') { showToast("FOCUS DONE!"); setTimeout(()=>setMode('break'), 1500); }
-                        else { showToast("BREAK DONE!"); setTimeout(()=>setMode('focus'), 1500); }
+                        if (app.mode === 'focus') { 
+                            showToast("FOCUS DONE!"); 
+                            setTimeout(() => { setMode('break'); app.active = true; updateIcon(); }, 1500); 
+                        } else { 
+                            showToast("BREAK DONE!"); 
+                            setTimeout(() => { setMode('focus'); }, 1500); 
+                        }
                     }
                 }
                 if (app.left >= 3600) { h = Math.floor(app.left/3600); m = Math.floor((app.left%3600)/60); isPomoHour=true; }
@@ -227,7 +320,7 @@
 
         function updateScaling() {
             const isClock = app.mode === 'clock';
-            const showSec = (isClock && app.s_sec) || (!isClock && app.left >= 3600);
+            const showSec = (isClock && app.s_sec) || (!isClock && app.mode !== 'stopwatch' && app.left >= 3600) || app.mode === 'stopwatch';
             document.body.classList.toggle('has-seconds', showSec);
             document.body.classList.toggle('has-ampm', isClock && app.s_ampm);
         }
@@ -236,16 +329,13 @@
             const vals = [Math.floor(v1/10), v1%10, Math.floor(v2/10), v2%10, Math.floor(v3/10), v3%10];
             const ids = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'sd1', 'sd2'];
             const map = [...vals, vals[4], vals[5]];
+            const fastIds = (app.mode === 'stopwatch') ? { sd1: true, sd2: true } : {};
             ids.forEach((id, i) => {
                 const el = document.getElementById(id);
-                if (el && el.textContent != map[i]) {
-                    el.style.transform = 'translateY(100%)'; el.style.opacity = '0';
-                    setTimeout(() => {
-                        el.textContent = map[i]; el.style.transition = 'none';
-                        el.style.transform = 'translateY(-100%)'; el.offsetHeight; 
-                        el.style.transition = 'transform 0.4s var(--ease), opacity 0.2s';
-                        el.style.transform = 'translateY(0)'; el.style.opacity = '1';
-                    }, 50);
+                const ch = String(map[i]);
+                if (el && el.dataset.val !== ch) {
+                    el.dataset.val = ch;
+                    setDigitSVG(el, ch, !fastIds[id]);
                 }
             });
         }
@@ -255,8 +345,93 @@
             document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(m[0]+'-tab').classList.add('active');
             document.getElementById('gear-btn').style.visibility = (m==='clock') ? 'visible' : 'hidden';
-            document.getElementById('timer-ctrl').style.visibility = (m==='clock') ? 'hidden' : 'visible';
-            resetTimer();
+            document.getElementById('timer-ctrl').style.display = (m==='focus' || m==='break') ? 'flex' : 'none';
+            document.getElementById('sw-ctrl').style.display = (m==='stopwatch') ? 'flex' : 'none';
+            document.getElementById('c-sec').style.display = 'none';
+            document.getElementById('p-sec').style.display = 'none';
+            document.getElementById('ampm').style.display = 'none';
+            document.querySelector('#p-sec .separator').textContent = (m==='stopwatch') ? '.' : ':';
+            if (m === 'stopwatch') {
+                renderSW();
+                renderLaps();
+                updateSwButtonStates();
+            } else {
+                document.getElementById('live-laps').style.display = 'none';
+                resetTimer();
+            }
+        }
+
+        function swElapsed() { return app.sw.accum + (app.sw.running ? Date.now() - app.sw.startTs : 0); }
+
+        function toggleStopwatch() {
+            if (app.sw.running) {
+                app.sw.accum += Date.now() - app.sw.startTs;
+                app.sw.running = false;
+                clearInterval(app.sw_int);
+            } else {
+                app.sw.startTs = Date.now();
+                app.sw.running = true;
+                app.sw_int = setInterval(() => { if (app.mode === 'stopwatch') renderSW(); }, 31);
+            }
+            updateSwPlayIcon(); updateSwButtonStates(); renderSW();
+        }
+
+        function swLap() {
+            if (!app.sw.running) return;
+            app.sw.laps.unshift({ n: app.sw.laps.length + 1, t: swElapsed() });
+            renderLaps();
+        }
+
+        function swReset() {
+            if (app.sw.running) { app.sw.running = false; clearInterval(app.sw_int); }
+            app.sw.accum = 0; app.sw.laps = [];
+            updateSwPlayIcon(); updateSwButtonStates(); renderSW(); renderLaps();
+        }
+
+        function updateSwPlayIcon() {
+            document.getElementById('sw-play-icon').innerHTML = app.sw.running
+                ? '<path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>'
+                : '<path d="M5 3l14 9-14 9V3z" fill="currentColor"/>';
+        }
+
+        function updateSwButtonStates() {
+            const lapBtn = document.getElementById('sw-lap-btn');
+            const resetBtn = document.getElementById('sw-reset-btn');
+            const hasTime = app.sw.running || swElapsed() > 0 || app.sw.laps.length > 0;
+            lapBtn.style.opacity = app.sw.running ? '1' : '0.3';
+            lapBtn.style.pointerEvents = app.sw.running ? 'auto' : 'none';
+            resetBtn.style.opacity = hasTime ? '1' : '0.3';
+            resetBtn.style.pointerEvents = hasTime ? 'auto' : 'none';
+        }
+
+        function renderSW() {
+            const ms = swElapsed();
+            const cs = Math.floor(ms / 10) % 100;
+            const totalSec = Math.floor(ms / 1000);
+            const s = totalSec % 60;
+            const m = Math.floor(totalSec / 60) % 100;
+            document.getElementById('p-sec').style.display = 'flex';
+            render(m, s, cs);
+        }
+
+        function renderLaps() {
+            const list = document.getElementById('live-laps');
+            if (app.mode !== 'stopwatch' || app.sw.laps.length === 0) {
+                list.style.display = 'none';
+                list.innerHTML = '';
+                return;
+            }
+            list.style.display = 'flex';
+            list.innerHTML = app.sw.laps.map(l => `<div class="lap-row"><span class="lap-n">LAP ${l.n}</span><span class="lap-t">${fmtLap(l.t)}</span></div>`).join('');
+        }
+
+        function fmtLap(ms) {
+            const cs = Math.floor(ms / 10) % 100;
+            const totalSec = Math.floor(ms / 1000);
+            const s = totalSec % 60;
+            const m = Math.floor(totalSec / 60);
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(m)}:${pad(s)}.${pad(cs)}`;
         }
 
         function resetTimer() { app.left = (app.mode==='focus' ? app.f : app.b); app.active = false; updateIcon(); tick(); }
@@ -266,17 +441,60 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         
+        function openEditPanel() {
+            const secs = app.mode === 'break' ? app.b : app.f;
+            document.getElementById('edit-title').textContent = app.mode === 'break' ? 'Break Duration' : 'Focus Duration';
+            document.getElementById('h-in').value = Math.floor(secs / 3600);
+            document.getElementById('m-in').value = Math.floor((secs % 3600) / 60);
+            openModal('edit-panel');
+        }
+
+        function resetEdit() {
+            const secs = app.mode === 'break' ? app.b : app.f;
+            document.getElementById('h-in').value = Math.floor(secs / 3600);
+            document.getElementById('m-in').value = Math.floor((secs % 3600) / 60);
+        }
+
+        function clampInput(el, max) {
+            let v = el.value.replace(/[^0-9]/g, '').slice(0, 2);
+            if (v !== '') v = String(Math.min(max, parseInt(v)));
+            el.value = v;
+        }
+
         function saveEdit() {
-            app.f = (parseInt(document.getElementById('h-in').value) || 0) * 3600 + (parseInt(document.getElementById('m-in').value) || 0) * 60;
+            const h = Math.min(23, Math.max(0, parseInt(document.getElementById('h-in').value) || 0));
+            const m = Math.min(59, Math.max(0, parseInt(document.getElementById('m-in').value) || 0));
+            const secs = h * 3600 + m * 60;
+            if (app.mode === 'break') app.b = secs; else app.f = secs;
             closeModal('edit-panel'); resetTimer();
         }
 
         function hold(e, id, d) {
-            clearInterval(app.h_int);
-            const step = () => { let i = document.getElementById(id); i.value = Math.max(0, parseInt(i.value)+d); };
-            step(); app.h_int = setInterval(step, 150);
+            clearTimeout(app.h_int);
+            app.h_speed = 250;
+            const step = () => {
+                stepDuration(id, d);
+                app.h_speed = Math.max(40, app.h_speed - 25);
+                app.h_int = setTimeout(step, app.h_speed);
+            };
+            step();
         }
-        function stopHold() { clearInterval(app.h_int); }
+        function stopHold() { clearTimeout(app.h_int); }
+
+        function stepDuration(id, d) {
+            const hEl = document.getElementById('h-in');
+            const mEl = document.getElementById('m-in');
+            let h = parseInt(hEl.value) || 0;
+            let m = parseInt(mEl.value) || 0;
+            if (id === 'm-in') {
+                m += d;
+                if (m > 59) { m = 0; h = Math.min(23, h + 1); }
+                else if (m < 0) { if (h > 0) { h -= 1; m = 59; } else { m = 0; } }
+            } else {
+                h = Math.min(23, Math.max(0, h + d));
+            }
+            hEl.value = h; mEl.value = m;
+        }
 
         function syncPrefs() {
             app.s_sec = document.getElementById('tog-sec').checked;
@@ -291,6 +509,7 @@
             const next = themes[(themes.indexOf(cur) + 1) % themes.length];
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
+            document.getElementById('theme-color-meta').setAttribute('content', THEME_BG[next]);
             showToast(`${next.toUpperCase()} THEME`);
         }
 
